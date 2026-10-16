@@ -1,0 +1,189 @@
+# AE Compendium ${compendium_version}: one jar, several mods (each keeps its original mod id).
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT (Construction Sticks, Applied Construction Sticks, Building Gadgets 2, AE2WTLib); LGPL-3.0 (Polymorph+, Polymorphic Energistics)"
+issueTrackerURL = "https://github.com/MehanikTMYT/AE-Compendium/issues"
+
+[[mods]]
+modId = "constructionstick"
+version = "${constructionstick_version}"
+displayName = "Construction Sticks (AE Compendium)"
+displayURL = "https://github.com/Mrbysco/ConstructionSticks"
+authors = "Mrbysco, ShyNieke"
+credits = "ThetaDev for creating Construction Wand"
+description = '''
+Construction Sticks make building easier! Place up to 1024 blocks at once, extend builds, conjure blocks in mid air.
+Part of AE Compendium.
+'''
+
+[[dependencies.constructionstick]]
+modId = "neoforge"
+type = "required"
+versionRange = "[26.1.2.71,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.constructionstick]]
+modId = "minecraft"
+type = "required"
+versionRange = "[26.1.2,26.2)"
+ordering = "NONE"
+side = "BOTH"
+
+[[mods]]
+modId = "appliedsticks"
+version = "${appliedsticks_version}"
+displayName = "Applied Construction Sticks (AE Compendium)"
+authors = "benbenlaw"
+logoFile = "logo.png"
+description = '''
+Connecting Construction Sticks to AE2. Part of AE Compendium.
+'''
+
+[[dependencies.appliedsticks]]
+modId = "constructionstick"
+type = "required"
+versionRange = "[3.1,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.appliedsticks]]
+modId = "ae2"
+type = "required"
+versionRange = "[26.1.3-alpha,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[mods]]
+modId = "polymorph_plus"
+version = "${polymorph_plus_version}"
+displayName = "Polymorph+ (AE Compendium)"
+displayURL = "https://github.com/Aminoquiz/polymorph_plus"
+logoFile = "polymorph_plus_icon.png"
+authors = "Aminoquiz (fork of Polymorph by Illusive Soulworks)"
+description = '''
+No more recipe conflicts! Choose the crafting result when more than one recipe matches.
+LGPL-3.0-or-later. Part of AE Compendium.
+'''
+
+[[mixins]]
+config = "polymorph_plus.mixins.json"
+[[mixins]]
+config = "polymorph_plus-compatibility.mixins.json"
+[[mixins]]
+config = "polymorph_plus-compatibility.neoforge.mixins.json"
+
+[[dependencies.polymorph_plus]]
+modId = "neoforge"
+type = "required"
+versionRange = "[26.1.2.71,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[mods]]
+modId = "polyeng"
+version = "${polyeng_version}"
+displayName = "Polymorphic Energistics (AE Compendium)"
+displayURL = "https://github.com/62832/PolymorphicEnergistics"
+logoFile = "icon.png"
+authors = "90"
+description = '''
+Polymorph recipe selection in the AE2 Crafting and Pattern Encoding terminals. LGPL-3.0. Part of AE Compendium.
+'''
+
+[[mixins]]
+config = "polyeng.mixins.json"
+
+[[dependencies.polyeng]]
+modId = "ae2"
+type = "required"
+versionRange = "[26.1.3-alpha,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.polyeng]]
+modId = "polymorph_plus"
+type = "required"
+versionRange = "[1.3,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[mods]]
+modId = "buildinggadgets2"
+version = "${buildinggadgets2_version}"
+displayName = "Building Gadgets 2 (AE Compendium)"
+displayURL = "https://github.com/Direwolf20-MC/BuildingGadgets2"
+authors = "Direwolf20"
+credits = "The NeoForge team"
+description = '''
+We can build it better, stronger, faster. MIT. Part of AE Compendium.
+'''
+
+[[accessTransformers]]
+file = "META-INF/buildinggadgets2_at.cfg"
+[[accessTransformers]]
+file = "META-INF/ae2wtlib_at.cfg"
+
+[[dependencies.buildinggadgets2]]
+modId = "neoforge"
+type = "required"
+versionRange = "[26.1.2.71,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[mods]]
+modId = "ae_compendium"
+version = "${compendium_version}"
+displayName = "AE Compendium"
+authors = "MehanikTMYT"
+description = '''
+Pack glue for the AE-side mods in this jar: "Order from AE" in Building Gadgets 2's material list crafts the missing
+materials through the AE network the gadget is bound to.
+'''
+
+[[dependencies.ae_compendium]]
+modId = "ae2"
+type = "required"
+versionRange = "[26.1.3-alpha,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.ae_compendium]]
+modId = "buildinggadgets2"
+type = "required"
+versionRange = "[1.4,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[mods]]
+modId = "ae2wtlib"
+version = "${ae2wtlib_version}"
+displayName = "AE2WTLib (AE Compendium)"
+authors = "mari_023, Ridanisaurus"
+description = '''
+Wireless versions of AE2 terminals with infinite range capabilities. MIT. Part of AE Compendium.
+'''
+
+[[mixins]]
+config = "ae2wtlib.mixins.json"
+
+[[dependencies.ae2wtlib]]
+modId = "ae2wtlib_api"
+type = "required"
+versionRange = "[${ae2wtlib_version}]"
+ordering = "BEFORE"
+side = "BOTH"
+
+[[dependencies.ae2wtlib]]
+modId = "ae2"
+type = "required"
+versionRange = "[26.1.3-alpha,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.ae2wtlib]]
+modId = "curios"
+type = "optional"
+versionRange = "*"
+ordering = "NONE"
+side = "BOTH"

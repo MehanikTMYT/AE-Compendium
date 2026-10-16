@@ -1,0 +1,14 @@
+{
+  "ae_compendium.order.button": "Order from AE",
+  "ae_compendium.order.button.tooltip": "Craft the missing materials through the AE network this gadget is bound to",
+  "ae_compendium.order.nothing_missing": "Nothing is missing.",
+  "ae_compendium.order.not_bound": "Hold a gadget bound to an AE network (Wireless Access Point).",
+  "ae_compendium.order.planning": "AE: planning %s crafting job(s)…",
+  "ae_compendium.order.header": "AE order: %s job(s) started",
+  "ae_compendium.order.submitted": " + %s ×%s — crafting",
+  "ae_compendium.order.in_network": " = %s ×%s — already in the network",
+  "ae_compendium.order.not_craftable": " × %s ×%s — no pattern",
+  "ae_compendium.order.missing_resources": " ! %s ×%s — not enough resources",
+  "ae_compendium.order.no_cpu": " ! %s ×%s — no free crafting CPU",
+  "ae_compendium.order.failed": " × %s ×%s — planning failed"
+}

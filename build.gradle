@@ -1,0 +1,137 @@
+// AE Compendium — one jar for the AE-side utility mods of the pack (2026-10-10).
+//
+// Assembly build: each module is the fleet fork of the original mod, compiled from its own tree (upstream sync stays in
+// those forks), and keeps its own mod id, registries and resources — so item ids, tags, configs and other mods' compat
+// checks are unchanged. One neoforge.mods.toml lists all modules (src/main/resources/META-INF).
+//
+// Modules:  constructionstick   ../ae-stack/core/ConstructionSticks                       (MIT, Mrbysco)
+//           appliedsticks       ../ae-stack/compendium-sources/Applied-Construction-Sticks (MIT, benbenlaw)
+//           polymorph_plus      jar module, see below                                    (LGPL-3.0-or-later)
+//           polyeng             ../ae-stack/compendium-sources/PolymorphicEnergistics     (LGPL-3.0, 90; ported to 26.1)
+//           buildinggadgets2    ../ae-stack/core/BuildingGadgets2-26 (upstream branch 21.6 = 26.1.2)  (MIT, Direwolf20)
+// Planned:  AE2 material ordering for the gadgets — own code; AE2 network link for the gadgets is our own
+//           code (owner 2026-10-10: GadgetsmeNetwork is AGPL-3.0 — not merged, features rewritten).
+plugins {
+    id 'net.neoforged.moddev' version '2.0.141'
+}
+
+// roots: source roots inside the fork (each with src/main/java + src/main/resources); generated: extra resource dirs
+// (datagen output); at: access transformer of the module (path inside the fork)
+def modules = [
+        [id: 'constructionstick', dir: '../ae-stack/core/ConstructionSticks', roots: ['.'], generated: ['src/generated/resources']],
+        [id: 'appliedsticks', dir: '../ae-stack/compendium-sources/Applied-Construction-Sticks', roots: ['.'], generated: []],
+        [id: 'polyeng', dir: '../ae-stack/compendium-sources/PolymorphicEnergistics', roots: ['.'], generated: []],
+        [id: 'buildinggadgets2', dir: '../ae-stack/core/BuildingGadgets2-26', roots: ['.'],
+         generated: ['src/generated-client/resources', 'src/generated-data/resources'],
+         at: 'src/main/resources/META-INF/accesstransformer.cfg'],
+]
+
+// Jar modules: mods with a build of their own (multiloader / source remapping). Built in their fork tree, then their
+// classes and resources are merged into our jar; their mods.toml is replaced by the block in ours.
+//   polymorph_plus: ../ae-stack/core/polymorph_plus (Aminoquiz/polymorph_plus 26.1.2, LGPL-3.0-or-later; fork of
+//   Polymorph by Illusive Soulworks). Build: `:neoforge:build -Plocal_mod_jars=<dir with JEI 29.34, REI, FastWorkbench>`.
+def jarModules = [
+        [id: 'polymorph_plus', jar: "../ae-stack/core/polymorph_plus/neoforge/build/libs/polymorph_plus-neoforge-${polymorph_plus_version}.jar"],
+        // AE2WTLib (Mari023, MIT) tag 26.1.1-beta + fleet build props; brings ae2wtlib_api via jarJar (kept nested)
+        [id: 'ae2wtlib', jar: "../ae-stack/addons/AE2WTLib/build/libs/ae2wtlib-${ae2wtlib_version}.jar"],
+]
+
+version = compendium_version
+group = 'ru.mehanik.aecompendium'
+base { archivesName = 'ae_compendium' }
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+
+repositories {
+    mavenLocal()
+    maven { url = 'https://modmaven.dev' }
+    maven { url = 'https://maven.blamejared.com' }
+    exclusiveContent {
+        forRepository { maven { url = 'https://cursemaven.com' } }
+        filter { includeGroup 'curse.maven' }
+    }
+}
+
+configurations {
+    localRuntime
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+dependencies {
+    implementation "org.appliedenergistics:appliedenergistics2:${ae2_version}"
+    compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
+    localRuntime "dev.emi:emi-neoforge:${emi_version}"
+    // Construction Sticks: optional Sophisticated Backpacks compat
+    compileOnly "curse.maven:sophisticated-core-618298:${sophisticated_core}"
+    compileOnly "curse.maven:sophisticated-backpacks-422301:${sophisticated_backpacks}"
+    // jar modules are visible to the source modules (e.g. Polymorphic Energistics -> Polymorph API)
+    jarModules.each { m -> compileOnly files(m.jar) }
+    compileOnly "de.mari_023:ae2wtlib_api:${ae2wtlib_version}"
+    // Building Gadgets 2: optional Curios / JEI integrations
+    compileOnly "curse.maven:curios-309927:${curios_file_id}"
+    compileOnly "mezz.jei:jei-26.1.2-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-26.1.2-neoforge-api:${jei_version}"
+}
+
+jar {
+    jarModules.each { m ->
+        from(zipTree(file(m.jar))) {
+            exclude 'META-INF/neoforge.mods.toml', 'META-INF/MANIFEST.MF', 'pack.mcmeta'
+            // several modules ship META-INF/accesstransformer.cfg: give each its own name (listed in our mods.toml)
+            eachFile { if (it.path == 'META-INF/accesstransformer.cfg') it.path = "META-INF/${m.id}_at.cfg" }
+        }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+sourceSets.main {
+    java {
+        modules.each { m -> m.roots.each { r -> srcDir "${m.dir}/${r}/src/main/java" } }
+    }
+    resources {
+        modules.each { m ->
+            m.roots.each { r -> srcDir "${m.dir}/${r}/src/main/resources" }
+            m.generated.each { g -> srcDir "${m.dir}/${g}" }
+        }
+        exclude 'pack.mcmeta'
+        // the modules' own mods.toml files are replaced by ours
+        exclude { it.file.path.contains('/ae-stack/') && it.path == 'META-INF/neoforge.mods.toml' }
+    }
+}
+
+neoForge {
+    version = neo_version
+    modules.findAll { it.at }.each { m -> accessTransformers.from(file("${m.dir}/${m.at}")) }
+    mods {
+        modules.each { m ->
+            "${m.id}" { sourceSet sourceSets.main }
+        }
+    }
+    runs {
+        configureEach { jvmArgument '-Xmx3g' }
+        client { client() }
+        server {
+            server()
+            programArgument '--nogui'
+        }
+    }
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    eachFile { details ->
+        if (details.path == 'META-INF/accesstransformer.cfg') {
+            def m = modules.find { it.at && details.file.path.contains(it.dir.replace('../', '/')) }
+            if (m) details.path = "META-INF/${m.id}_at.cfg"
+        }
+    }
+    def props = [compendium_version: compendium_version, constructionstick_version: constructionstick_version,
+                 appliedsticks_version: appliedsticks_version, polymorph_plus_version: polymorph_plus_version, polyeng_version: polyeng_version, buildinggadgets2_version: buildinggadgets2_version, ae2wtlib_version: ae2wtlib_version]
+    inputs.properties props
+    filesMatching('META-INF/neoforge.mods.toml') { expand props }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xmaxerrs' << '2000'
+}

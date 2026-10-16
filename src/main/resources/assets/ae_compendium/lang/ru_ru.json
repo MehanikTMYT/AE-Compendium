@@ -1,0 +1,14 @@
+{
+  "ae_compendium.order.button": "Заказать в AE",
+  "ae_compendium.order.button.tooltip": "Скрафтить недостающие материалы через сеть AE, к которой привязан гаджет",
+  "ae_compendium.order.nothing_missing": "Ничего не нужно докупать.",
+  "ae_compendium.order.not_bound": "Возьмите в руку гаджет, привязанный к сети AE (точка беспроводного доступа).",
+  "ae_compendium.order.planning": "AE: расчёт заданий на крафт: %s…",
+  "ae_compendium.order.header": "Заказ в AE: запущено заданий — %s",
+  "ae_compendium.order.submitted": " + %s ×%s — крафтится",
+  "ae_compendium.order.in_network": " = %s ×%s — уже есть в сети",
+  "ae_compendium.order.not_craftable": " × %s ×%s — нет шаблона",
+  "ae_compendium.order.missing_resources": " ! %s ×%s — не хватает ресурсов",
+  "ae_compendium.order.no_cpu": " ! %s ×%s — нет свободного процессора крафта",
+  "ae_compendium.order.failed": " × %s ×%s — ошибка расчёта"
+}
