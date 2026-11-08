@@ -69,8 +69,8 @@ dependencies {
     compileOnly "de.mari_023:ae2wtlib_api:${ae2wtlib_version}"
     // Building Gadgets 2: optional Curios / JEI integrations
     compileOnly "curse.maven:curios-309927:${curios_file_id}"
-    compileOnly "mezz.jei:jei-26.1.2-common-api:${jei_version}"
-    compileOnly "mezz.jei:jei-26.1.2-neoforge-api:${jei_version}"
+// синк/порт 26.1.2: JEI-зависимость удалена — политика EMI-only
+// синк/порт 26.1.2: JEI-зависимость удалена — политика EMI-only
 }
 
 jar {
